@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option csharp_namespace = "News.Vampire.Service.Protos";
+
+package usergroup;
+
+service UserGroupServiceGrpc {
+  rpc GetUserGroups (UserGroupRequest) returns (UserGroupsGrpc);
+}
+
+message UserGroupRequest {
+	int32 UserId = 1;
+}
+
+message UserGroupsGrpc {
+  repeated UserGroupGrpc Result = 1;
+}
+
+message UserGroupGrpc {
+	int32 Id = 1;
+	string Name = 2;
+	repeated SourceGrpc Sources = 3;
+}
+
+message SourceGrpc {
+	int32 Id = 1;
+	string Name = 2;
+}

@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option csharp_namespace = "News.Vampire.Service.Protos";
+
+package newsitem;
+
+import "google/protobuf/wrappers.proto";
+
+service NewsItemServiceGrpc {
+  rpc GetNewsItems (NewsItemRequest) returns (NewsItemsGrpc);
+}
+message NewsItemRequest {
+	string Login = 1;
+	string Password = 2; 
+}
+
+message NewsItemsGrpc {
+  repeated NewsItemGrpc Result = 1;
+}
+
+message NewsItemGrpc {
+	int64 Id = 1;
+	google.protobuf.StringValue  Title = 2;
+	google.protobuf.StringValue  Description = 3;
+	google.protobuf.StringValue  NewsUrl = 4;
+	google.protobuf.StringValue  ImageUrl = 5;
+	repeated CategoryGrpc Categories = 6;
+	google.protobuf.StringValue  Source = 7;
+	int32 SourceId = 8;
+	int64 PublicationDate = 9;
+}
+
+message CategoryGrpc {
+	google.protobuf.StringValue  Name = 1;
+}
+

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option csharp_namespace = "News.Vampire.Service.Protos";
+
+package group;
+
+// The group service definition.
+service GroupServiceGrpc {
+  rpc GetGroups (EmptyRequest) returns (GroupsGrpc);
+}
+
+message EmptyRequest {
+}
+
+message GroupsGrpc {
+  repeated GroupGrpc Result = 1;
+}
+
+message GroupGrpc {
+	int32 Id = 1;
+	string Name = 2;
+	bool IsActive = 3;
+}

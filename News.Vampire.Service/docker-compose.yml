@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  news.vampire.service:
+    image: ${DOCKER_REGISTRY-}news.vampire.service
+    ports:
+      - "5000:80"
+    build:
+      context: .
+      dockerfile: News.Vampire.Service/Dockerfile
+    environment:
+       DB_CONNECTION_STRING: "Server=db;UserName=postgres;Password=sqlrubin;Port=5432;Database=news_db;"
+       DOWNLOAD_PERIOD_MINUTES: 5
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13.0
+    container_name: database_postgresql
+    ports:
+      - "5400:5432"
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: sqlrubin
+      POSTGRESS_DB: news_db
+    volumes:
+      - db_volume:/var/lib/postgresql/data  
+volumes:
+    db_volume:

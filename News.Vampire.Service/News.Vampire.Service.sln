@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30626.31
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "News.Vampire.Service", "News.Vampire.Service\News.Vampire.Service.csproj", "{6BABF2BD-6E3A-4C2F-B1E8-09C5739CAC78}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{5F0F7BDC-89E3-4CB7-8824-F9FE612C69B8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6BABF2BD-6E3A-4C2F-B1E8-09C5739CAC78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BABF2BD-6E3A-4C2F-B1E8-09C5739CAC78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BABF2BD-6E3A-4C2F-B1E8-09C5739CAC78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BABF2BD-6E3A-4C2F-B1E8-09C5739CAC78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F0F7BDC-89E3-4CB7-8824-F9FE612C69B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F0F7BDC-89E3-4CB7-8824-F9FE612C69B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F0F7BDC-89E3-4CB7-8824-F9FE612C69B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F0F7BDC-89E3-4CB7-8824-F9FE612C69B8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {791E3F3E-1D1F-416A-811F-09AB795FC706}
+	EndGlobalSection
+EndGlobal
