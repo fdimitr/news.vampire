@@ -36,7 +36,9 @@ namespace News.Vampire.Service
             DbContextOptions<DataContext> dbContextOptions = new DbContextOptionsBuilder<DataContext>().UseNpgsql(Configuration.GetValue<string>(ConfigKey.ConnectionString)).Options;
 
             //For regular using
+            services.AddDbContextFactory<DataContext>(options => options.UseNpgsql("Server=localhost;UserName=postgres;Password=sqlrubin;Port=5432;Database=news_db;"));
             services.AddSingleton<DbContextOptions<DataContext>>(dbContextOptions);
+
             //For migration
             //services.AddDbContext<DataContext>(options => options.UseNpgsql("Server=localhost;UserName=postgres;Password=sqlrubin;Port=5432;Database=news_db;"));
 

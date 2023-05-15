@@ -12,29 +12,27 @@ namespace News.Web.Api.BusinessLogic
 {
     public class SourceLogic : BaseLogic<Source>, ISourceLogic
     {
-        public SourceLogic(DbContextOptions<DataContext> dbContextOptions) : base(dbContextOptions)
+        public SourceLogic(IDbContextFactory<DataContext> dbContextFactory) : base(dbContextFactory)
         {
         }
 
         public async Task<IList<Source>> GetAll()
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                return await(from source in dbContext.Sources
-                             select source).ToListAsync();
-            }
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+            return await (from source in dbContext.Sources
+                          select source).ToListAsync();
         }
 
         public async Task<IList<Source>> GetSourcesReadyToLoadAsync()
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                var timestampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-                return await (from source in dbContext.Sources
-                              join groupEntity in dbContext.Groups on source.GroupId equals groupEntity.Id
-                              where source.NextLoadedTime < timestampNow && groupEntity.isActive
-                              select source).ToListAsync();
-            }
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+            var timestampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            return await (from source in dbContext.Sources
+                          join groupEntity in dbContext.Groups on source.GroupId equals groupEntity.Id
+                          where source.NextLoadedTime < timestampNow && groupEntity.isActive
+                          select source).ToListAsync();
         }
     }
 }

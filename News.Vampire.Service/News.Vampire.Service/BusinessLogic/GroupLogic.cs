@@ -9,16 +9,15 @@ namespace News.Vampire.Service.BusinessLogic
 {
     public class GroupLogic : BaseLogic<Group>, IGroupLogic
     {
-        public GroupLogic(DbContextOptions<DataContext> dbContextOptions): base(dbContextOptions)
+        public GroupLogic(IDbContextFactory<DataContext> dbContextFactory) : base(dbContextFactory)
         {
         }
 
         public async Task<IList<Group>> GetAllAsync()
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                return await dbContext.Groups.ToListAsync();
-            }
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+            return await dbContext.Groups.ToListAsync();
         }
     }
 }

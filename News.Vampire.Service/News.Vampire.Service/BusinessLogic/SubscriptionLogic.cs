@@ -10,18 +10,17 @@ namespace News.Vampire.Service.BusinessLogic
 {
     public class SubscriptionLogic : BaseLogic<Subscription>, ISubscriptionLogic
     {
-        public SubscriptionLogic(DbContextOptions<DataContext> dbContextOptions) : base(dbContextOptions)
+        public SubscriptionLogic(IDbContextFactory<DataContext> dbContextFactory) : base(dbContextFactory)
         {
         }
 
         public async Task<List<Subscription>> GetSubscriptionsByUserAsync(int userId)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                return await (from subscr in dbContext.Subscriptions
-                              where subscr.UserId == userId
-                              select subscr).ToListAsync();
-            }
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+            return await (from subscr in dbContext.Subscriptions
+                          where subscr.UserId == userId
+                          select subscr).ToListAsync();
         }
     }
 }

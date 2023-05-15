@@ -16,7 +16,7 @@ namespace News.Vampire.Service.BusinessLogic
     {
         private readonly IConfiguration _configuration;
 
-        public AuthLogic(DbContextOptions<DataContext> dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
+        public AuthLogic(IDbContextFactory<DataContext> dbContextFactory, IConfiguration configuration) : base(dbContextFactory)
         {
             _configuration = configuration;
         }
@@ -32,12 +32,12 @@ namespace News.Vampire.Service.BusinessLogic
                 numBytesRequested: 256 / 8));
 
             User result = null;
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                result = await (from user in dbContext.Users
-                                where user.Login == login && user.Password == hashed
-                                select user).FirstOrDefaultAsync();
-            }
+            using var dbContext = await _dbContextFactory.CreateDbContextAsync();
+
+            result = await (from user in dbContext.Users
+                            where user.Login == login && user.Password == hashed
+                            select user).FirstOrDefaultAsync();
+
 
             return result;
         }
