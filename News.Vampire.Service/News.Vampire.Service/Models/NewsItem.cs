@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,6 +32,7 @@ namespace News.Vampire.Service.Models
         public long TimeStamp { get; set; }
 
         public string ExternalId { get; set; }
+
 
         [StringLength(256)]
         [Column(TypeName = "jsonb")]

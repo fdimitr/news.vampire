@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using News.Vampire.Service.BusinessLogic.Interfaces;
+using News.Vampire.Service.DataAccess;
 using News.Vampire.Service.Managers.Interfaces;
 using News.Vampire.Service.Models;
 using System;

@@ -6,26 +6,30 @@ namespace News.Vampire.Service.DataAccess
 {
     public class DataContext : DbContext
     {
-        public DbSet<Source> Sources { get; set; }
-        public DbSet<NewsItem> NewsItem { get; set; }
-        public DbSet<Group> Groups { get; set; }
-        public DbSet<Subscription> Subscriptions { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<UserGroup> UserGroups { get; set; }
+        public virtual DbSet<Source> Sources { get; set; }
+        public virtual DbSet<NewsItem> NewsItem { get; set; }
+        public virtual DbSet<Group> Groups { get; set; }
+        public virtual DbSet<Subscription> Subscriptions { get; set; }
+        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserGroup> UserGroups { get; set; }
 
+        private bool UnitTestMode { get; }
 
         public DataContext() : base()
         {
             Database.Migrate();
         }
 
-        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        public DataContext(DbContextOptions<DataContext> options, bool unitTestMode = false) : base(options)
         {
+            UnitTestMode = unitTestMode;
             Database.EnsureCreated();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            if (UnitTestMode) return;
+
             // hashed "newspassword"
             modelBuilder.Entity<User>().HasData(new User { Id = 1, Login = "Dmitry", Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=" }); 
 
