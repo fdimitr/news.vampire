@@ -14,7 +14,7 @@ namespace News.Vampire.Service.BusinessLogic
         {
         }
 
-        public async Task<IList<UserGroup>> GetAllByUserAsync(long userId)
+        public async Task<IList<UserGroup>> GetAllByUserAsync(int userId)
         {
             using var dbContext = await _dbContextFactory.CreateDbContextAsync();
 

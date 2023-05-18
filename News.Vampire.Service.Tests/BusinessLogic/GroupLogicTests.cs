@@ -1,33 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.Extensions.Configuration;
 using Moq;
 using News.Vampire.Service.BusinessLogic;
-using News.Vampire.Service.Constants;
 using News.Vampire.Service.DataAccess;
 using News.Vampire.Service.Models;
 using NUnit.Framework;
 
 namespace News.Vampire.Service.Tests.BusinessLogic
 {
-    [TestFixture]
-    public class GroupLogicTests
+    public class GroupLogicTests: BaseTests
     {
-        private IConfiguration config;
-
-        public GroupLogicTests()
-        {
-            config = InitConfiguration();
-            var dbTestContext = new DataContext(GetDbContextOptions(), unitTestMode: true);
-            dbTestContext.Database.EnsureDeleted();
-        }
-
-        public DbContextOptions<DataContext> GetDbContextOptions()
-        {
-            return new DbContextOptionsBuilder<DataContext>().UseNpgsql(config.GetValue<string>(ConfigKey.ConnectionString)).Options;
-
-        }
-
         [TearDown]
         public void CleanUp()
         {
@@ -35,24 +16,8 @@ namespace News.Vampire.Service.Tests.BusinessLogic
             dbTestContext.Groups.RemoveRange(dbTestContext.Groups);
         }
 
-        [OneTimeTearDown]
-        public void TotalCleanUp()
-        {
-            var dbTestContext = new DataContext(GetDbContextOptions(), unitTestMode: true);
-            dbTestContext.Database.EnsureDeleted();
-        }
-
-        public static IConfiguration InitConfiguration()
-        {
-            var config = new ConfigurationBuilder()
-               .AddJsonFile("appsettings.test.json")
-                .AddEnvironmentVariables()
-                .Build();
-            return config;
-        }
-
         [Test]
-        public async Task GetAll()
+        public async Task GetAllTest()
         {
             // Arrange
             var dbTestContext = new DataContext(GetDbContextOptions(), unitTestMode: true);

@@ -6,6 +6,6 @@ namespace News.Vampire.Service.BusinessLogic.Interfaces
 {
     public interface IUserGroupLogic: IBaseLogic<UserGroup>
     {
-        Task<IList<UserGroup>> GetAllByUserAsync(long userId);
+        Task<IList<UserGroup>> GetAllByUserAsync(int userId);
     }
 }
