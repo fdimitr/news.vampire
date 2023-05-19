@@ -15,10 +15,10 @@ namespace News.Vampire.Service.DataAccess
 
         private bool UnitTestMode { get; }
 
-        public DataContext() : base()
-        {
-            Database.Migrate();
-        }
+        //public DataContext() : base()
+        //{
+        //    Database.Migrate();
+        //}
 
         public DataContext(DbContextOptions<DataContext> options, bool unitTestMode = false) : base(options)
         {

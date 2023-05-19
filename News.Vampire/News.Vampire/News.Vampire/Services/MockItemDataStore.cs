@@ -5,6 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Grpc.Core;
 using News.Vampire.Service.Protos;
+using Grpc.Net.Client;
+using System.Net.Http;
+using Grpc.Net.Client.Web;
 
 namespace News.Vampire.Services
 {
@@ -68,7 +71,14 @@ namespace News.Vampire.Services
             UserGroupRequest request = new UserGroupRequest();
             request.UserId = 1;
 
-            var channel = new Channel("localhost:5000", ChannelCredentials.Insecure);
+            //            var channel = new Channel("localhost:5000", ChannelCredentials.Insecure);
+            // Configure a channel to use gRPC-Web
+            var handler = new GrpcWebHandler(GrpcWebMode.GrpcWebText, new HttpClientHandler());
+            var channel = GrpcChannel.ForAddress("http://10.0.2.2:5000", new GrpcChannelOptions
+            {
+                HttpClient = new HttpClient(handler)
+            });
+
             UserGroupServiceGrpc.UserGroupServiceGrpcClient client = new UserGroupServiceGrpc.UserGroupServiceGrpcClient(channel);
             var userGroupsGrpc = client.GetUserGroups(request);
 

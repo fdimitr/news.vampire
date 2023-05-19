@@ -70,7 +70,7 @@ namespace News.Vampire.Service
             }
 
             app.UseRouting();
-
+            app.UseGrpcWeb(new GrpcWebOptions { DefaultEnabled = true });
             //app.UseAuthentication();
             //app.UseAuthorization();
 
