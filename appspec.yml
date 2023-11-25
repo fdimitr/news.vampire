@@ -3,18 +3,18 @@ os: linux
 files:
   - source: app
     destination: /var/www
-  - source: deploy-scripts/news.vampire.service
+  - source: News.Vampire.Service/deploy-scripts/news.vampire.service
     destination: /etc/systemd/service
 hooks:
   BeforeInstall:
-    - location: deploy-scripts/before_install.sh
+    - location: News.Vampire.Service/deploy-scripts/before_install.sh
       timeout: 300
       runas: root
   ApplicationStop:
-    - location: deploy-scripts/stop_app.sh
+    - location: News.Vampire.Service/deploy-scripts/stop_app.sh
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: deploy-scripts/start_app.sh
+    - location: News.Vampire.Service/deploy-scripts/start_app.sh
       timeout: 300
       runas: root
