@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using News.Vampire.Service.DataAccess;
 using News.Vampire.Service.Constants;
 using News.Vampire.Service.BusinessLogic.Interfaces;
@@ -24,8 +23,17 @@ modelBuilder.EntitySet<Group>("Groups");
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-DbContextOptions<DataContext> dbContextOptions = 
-    new DbContextOptionsBuilder<DataContext>().UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString)).Options;
+// For regular using
+//DbContextOptions<DataContext> dbContextOptions = 
+//    new DbContextOptionsBuilder<DataContext>().UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString)).Options;
+//builder.Services.AddSingleton(dbContextOptions);
+
+//For migration
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString));
+});
+
 
 // Add services to the container.
 
@@ -42,7 +50,6 @@ builder.Services.AddControllers().AddOData(
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<DbContextOptions<DataContext>>(dbContextOptions);
 
 builder.Services.AddScoped<IAuthLogic, AuthLogic>();
 builder.Services.AddScoped<IGroupLogic, GroupLogic>();

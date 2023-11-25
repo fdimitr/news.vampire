@@ -9,11 +9,14 @@ namespace News.Vampire.Service.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Id { get; set; }
 
-        [ForeignKey("SourceRefId")]
+        [Required]
         public int SourceId { get; set; }
 
+        public Source Source { get; set; }
+
+        [Required]
         [StringLength(512)]
-        public required string Title { get; set; }
+        public string Title { get; set; }
 
         [StringLength(2048)]
         [Column(TypeName = "jsonb")]

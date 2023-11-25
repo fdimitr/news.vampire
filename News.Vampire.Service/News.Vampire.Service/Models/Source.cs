@@ -9,15 +9,19 @@ namespace News.Vampire.Service.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public long GroupId { get; set; }
+        public int GroupId { get; set; }
+
+        public Group Group { get; set; }
 
         public virtual ICollection<NewsItem>? News { get; set; }
 
+        [Required]
         [StringLength(256)]
-        public required string Url { get; set; }
+        public string Url { get; set; }
 
+        [Required]
         [StringLength(64)]
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         [StringLength(256)]
         public string? Description { get; set; }

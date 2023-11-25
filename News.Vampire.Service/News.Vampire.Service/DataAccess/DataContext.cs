@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using News.Vampire.Service.Models;
 using System;
+using System.Reflection.Metadata;
 
 namespace News.Vampire.Service.DataAccess
 {
@@ -27,7 +28,13 @@ namespace News.Vampire.Service.DataAccess
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // hashed "newspassword"
-            modelBuilder.Entity<User>().HasData(new User { Id = 1, Login = "Dmitry", Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=", Role = "admin"}); 
+            modelBuilder.Entity<User>().HasData(new User { Id = 1, Login = "Dmitry", Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=", Role = "admin"});
+
+            modelBuilder.Entity<Group>()
+                .HasMany(e => e.Sources)
+                .WithOne(e => e.Group)
+                .HasForeignKey(e => e.GroupId)
+                .HasPrincipalKey(e => e.Id);
 
             modelBuilder.Entity<Group>().HasData(new Group { Id = 1, Name = "Корреспондент", isActive = true });
             modelBuilder.Entity<Group>().HasData(new Group { Id = 2, Name = "Habr", isActive = true });
@@ -84,14 +91,6 @@ namespace News.Vampire.Service.DataAccess
 
             modelBuilder.Entity<Source>().HasData(new Source
             {
-                Id = 7,
-                GroupId = 3,
-                Name = "NEWSru.com :: Мнения",
-                Url = "https://rss.newsru.com/blog"
-            });
-
-            modelBuilder.Entity<Source>().HasData(new Source
-            {
                 Id = 8,
                 GroupId = 4,
                 Name = "Meduza: Новости",
@@ -105,12 +104,19 @@ namespace News.Vampire.Service.DataAccess
                 Name = "AUTO News",
                 Url = "https://autonews.autoua.net/rss/"
             });
-            modelBuilder.Entity<UserGroup>().HasData(new UserGroup { Id = 1, Name = "My Group"});
+
+            modelBuilder.Entity<UserGroup>()
+                .HasMany(e => e.Subscriptions)
+                .WithOne(e => e.UserGroup)
+                .HasForeignKey(e => e.UserGroupId)
+                .HasPrincipalKey(e => e.Id);
+
+            var userGroup = new UserGroup { Id = 1, UserId = 1, Name = "My Group" };
+            modelBuilder.Entity<UserGroup>().HasData(userGroup);
 
             modelBuilder.Entity<Subscription>().HasData(new Subscription { Id = 1, SourceId = 1, UserId = 1, UserGroupId = 1 });
-            modelBuilder.Entity<Subscription>().HasData(new Subscription { Id = 2, SourceId = 2, UserId = 1, UserGroupId = 1 });
-            modelBuilder.Entity<Subscription>().HasData(new Subscription { Id = 3, SourceId = 6, UserId = 1 });
-            modelBuilder.Entity<Subscription>().HasData(new Subscription { Id = 4, SourceId = 7, UserId = 1 });
+            modelBuilder.Entity<Subscription>().HasData(new Subscription { Id = 3, SourceId = 6, UserId = 1, UserGroupId = 1 });
+            modelBuilder.Entity<Subscription>().HasData(new Subscription { Id = 2, SourceId = 8, UserId = 1, UserGroupId = 1 });
         }
 
     }

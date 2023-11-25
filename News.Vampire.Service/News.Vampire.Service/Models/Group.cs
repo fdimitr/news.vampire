@@ -12,11 +12,13 @@ namespace News.Vampire.Service.Models
         public int Id { get; set; }
 
         [StringLength(64)]
-         public required string Name { get; set; }
+        [Required]
+         public string Name { get; set; }
 
         public virtual ICollection<Source>? Sources { get; set; }
 
         [DefaultValue(true)]
-        public required bool isActive { get; set; }
+        [Required]
+        public bool isActive { get; set; }
     }
 }

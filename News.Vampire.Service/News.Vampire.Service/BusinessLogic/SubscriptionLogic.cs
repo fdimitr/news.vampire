@@ -13,12 +13,10 @@ namespace News.Vampire.Service.BusinessLogic
 
         public async Task<List<Subscription>> GetSubscriptionsByUserAsync(int userId)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                return await (from subscr in dbContext.Subscriptions
-                              where subscr.UserId == userId
-                              select subscr).ToListAsync();
-            }
+            await using var dbContext = new DataContext(_dbContextOptions);
+            return await (from subscr in dbContext.Subscriptions
+                where subscr.UserId == userId
+                select subscr).ToListAsync();
         }
     }
 }

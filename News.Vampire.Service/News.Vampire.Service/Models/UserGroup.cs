@@ -9,8 +9,11 @@ namespace News.Vampire.Service.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        public int UserId { get; set; }
+
+        [Required]
         [StringLength(64)]
-        public required string Name { get; set; }
+        public string Name { get; set; }
 
         public virtual ICollection<Subscription>? Subscriptions { get; set; }
     }
