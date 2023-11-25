@@ -8,13 +8,17 @@ files:
 hooks:
   BeforeInstall:
     - location: News.Vampire.Service/deploy-scripts/before_install.sh
-      timeout: 300
+      timeout: 120
+      runas: root
+  AfterInstall:
+    - location: News.Vampire.Service/deploy-scripts/after_install.sh
+      timeout: 120
       runas: root
   ApplicationStop:
     - location: News.Vampire.Service/deploy-scripts/stop_app.sh
-      timeout: 300
+      timeout: 120
       runas: root
   ApplicationStart:
     - location: News.Vampire.Service/deploy-scripts/start_app.sh
-      timeout: 300
+      timeout: 120
       runas: root
