@@ -3,7 +3,7 @@ Description=News Vampire Service
 
 [Service]
 WorkingDirectory=/var/www/
-ExecStart=/usr/bin/dotnet /var/www/News.Vampire.Service.exe
+ExecStart=/usr/bin/dotnet /var/www/News.Vampire.Service.dll
 Restart=always
 # Restart service after 10 seconds when dotnet service crashes
 RestartSec=10
