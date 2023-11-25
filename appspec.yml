@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source: app
+  - source: News.Vampire.Service/app
     destination: /var/www
   - source: News.Vampire.Service/deploy-scripts/news.vampire.service
     destination: /etc/systemd/service
