@@ -23,11 +23,6 @@ modelBuilder.EntitySet<Group>("Groups");
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-// For regular using
-//DbContextOptions<DataContext> dbContextOptions = 
-//    new DbContextOptionsBuilder<DataContext>().UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString)).Options;
-//builder.Services.AddSingleton(dbContextOptions);
-
 //For migration
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -42,9 +37,6 @@ builder.Services.AddControllers().AddOData(
     .Select()
     .Filter()
     .OrderBy()
-    .Expand()
-    .Count()
-    .SetMaxTop(null)
     .AddRouteComponents("odata", modelBuilder.GetEdmModel()));
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -63,15 +55,15 @@ builder.Services.AddHostedService<DownloadService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 
