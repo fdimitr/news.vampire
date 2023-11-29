@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace News.Vampire.Service.BusinessLogic.Interfaces
 {
-    public interface IGroupLogic: IBaseLogic<Group>
+    public interface IGroupLogic
     {
-        Task<IList<Group>> GetAllAsync();
+        IQueryable<Group> GetAll();
     }
 }

@@ -6,63 +6,48 @@ namespace News.Vampire.Service.BusinessLogic
 {
     public class BaseLogic<T> : IBaseLogic<T> where T : class
     {
-        protected DbContextOptions<DataContext> _dbContextOptions { get; set; }
+        protected DataContext DbContext { get; set; }
 
-        public BaseLogic(DbContextOptions<DataContext> dbContextOptions)
+        public BaseLogic(DataContext dbContext)
         {
-            _dbContextOptions = dbContextOptions;
+            DbContext = dbContext;
         }
 
         public async Task<T?> GetByIdAsync(int id)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                return await dbContext.Set<T>().FindAsync(id);
-            }
+            return await DbContext.Set<T>().FindAsync(id);
         }
 
         public async Task<T> CreateAsync(T entity)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                var result = dbContext.Set<T>().Add(entity);
-                await dbContext.SaveChangesAsync();
-                return result.Entity;
-            }
+            var result = DbContext.Set<T>().Add(entity);
+            await DbContext.SaveChangesAsync();
+            return result.Entity;
         }
 
         public async Task UpdateAsync(T entity)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                dbContext.Set<T>().Attach(entity);
-                dbContext.Entry(entity).State = EntityState.Modified;
-                await dbContext.SaveChangesAsync();
-            }
+            DbContext.Set<T>().Attach(entity);
+            DbContext.Entry(entity).State = EntityState.Modified;
+            await DbContext.SaveChangesAsync();
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
+            T? entity = await DbContext.Set<T>().FindAsync(id);
+            if (entity is null)
             {
-                T? entity = await dbContext.Set<T>().FindAsync(id);
-                if (entity is null)
-                {
-                    return false;
-                }
-
-                dbContext.Set<T>().Remove(entity);
-                var result = await dbContext.SaveChangesAsync();
-                return result > 0 ? true : false;
+                return false;
             }
+
+            DbContext.Set<T>().Remove(entity);
+            var result = await DbContext.SaveChangesAsync();
+            return result > 0;
         }
 
         public async Task<bool> EntityExists(int id)
         {
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                return await dbContext.Set<T>().FindAsync(id) != null;
-            }
+            return await DbContext.Set<T>().FindAsync(id) != null;
         }
 
     }

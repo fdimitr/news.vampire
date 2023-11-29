@@ -36,10 +36,10 @@ namespace News.Vampire.Service.DataAccess
                 .HasForeignKey(e => e.GroupId)
                 .HasPrincipalKey(e => e.Id);
 
-            modelBuilder.Entity<Group>().HasData(new Group { Id = 1, Name = "Корреспондент", isActive = true });
-            modelBuilder.Entity<Group>().HasData(new Group { Id = 2, Name = "Habr", isActive = true });
-            modelBuilder.Entity<Group>().HasData(new Group { Id = 3, Name = "News.RU", isActive = true });
-            modelBuilder.Entity<Group>().HasData(new Group { Id = 4, Name = "Новости", isActive = true });
+            modelBuilder.Entity<Group>().HasData(new Group { Id = 1, Name = "Корреспондент", IsActive = true });
+            modelBuilder.Entity<Group>().HasData(new Group { Id = 2, Name = "Habr", IsActive = true });
+            modelBuilder.Entity<Group>().HasData(new Group { Id = 3, Name = "News.RU", IsActive = true });
+            modelBuilder.Entity<Group>().HasData(new Group { Id = 4, Name = "Новости", IsActive = true });
 
             modelBuilder.Entity<Source>().HasData(new Source
             {

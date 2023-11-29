@@ -6,7 +6,6 @@ using News.Vampire.Service.BusinessLogic;
 using News.Vampire.Service.Managers.Interfaces;
 using News.Vampire.Service.Managers;
 using News.Vampire.Service.Services;
-using News.Web.Api.BusinessLogic;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using News.Vampire.Service.Models;

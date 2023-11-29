@@ -21,7 +21,7 @@ namespace News.Vampire.Service.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    isActive = table.Column<bool>(type: "boolean", nullable: false)
+                    IsActive = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,13 +145,13 @@ namespace News.Vampire.Service.Migrations
 
             migrationBuilder.InsertData(
                 table: "Groups",
-                columns: new[] { "Id", "Name", "isActive" },
+                columns: new[] { "Id", "IsActive", "Name" },
                 values: new object[,]
                 {
-                    { 1, "Корреспондент", true },
-                    { 2, "Habr", true },
-                    { 3, "News.RU", true },
-                    { 4, "Новости", true }
+                    { 1, true, "Корреспондент" },
+                    { 2, true, "Habr" },
+                    { 3, true, "News.RU" },
+                    { 4, true, "Новости" }
                 });
 
             migrationBuilder.InsertData(

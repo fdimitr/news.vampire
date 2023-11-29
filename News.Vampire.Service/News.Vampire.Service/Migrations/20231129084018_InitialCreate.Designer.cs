@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace News.Vampire.Service.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20231124202843_InitialCreate")]
+    [Migration("20231129084018_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -34,13 +34,13 @@ namespace News.Vampire.Service.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(64)
                         .HasColumnType("character varying(64)");
-
-                    b.Property<bool>("isActive")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -50,26 +50,26 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Корреспондент",
-                            isActive = true
+                            IsActive = true,
+                            Name = "Корреспондент"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Habr",
-                            isActive = true
+                            IsActive = true,
+                            Name = "Habr"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "News.RU",
-                            isActive = true
+                            IsActive = true,
+                            Name = "News.RU"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Новости",
-                            isActive = true
+                            IsActive = true,
+                            Name = "Новости"
                         });
                 });
 

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace News.Vampire.Service.Models
 {
@@ -11,17 +12,15 @@ namespace News.Vampire.Service.Models
 
         public int GroupId { get; set; }
 
-        public Group Group { get; set; }
+        public Group? Group { get; set; }
 
         public virtual ICollection<NewsItem>? News { get; set; }
 
-        [Required]
         [StringLength(256)]
-        public string Url { get; set; }
+        public required string Url { get; set; }
 
-        [Required]
         [StringLength(64)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [StringLength(256)]
         public string? Description { get; set; }

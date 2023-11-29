@@ -23,10 +23,10 @@ namespace News.Vampire.Service.Controllers
         // GET: api/<GroupController>
         [HttpGet]
         [EnableQuery]
-        public async Task<IList<Group>> Get()
+        public IQueryable<Group> Get()
         {
             _logger.LogDebug($"There was a {nameof(Get)} method call of {nameof(GroupController)}. Call from {HttpContext.Request.Host.Host}");
-            return await _groupLogic.GetAllAsync();
+            return _groupLogic.GetAll();
         }
 
         // POST api/<GroupController>

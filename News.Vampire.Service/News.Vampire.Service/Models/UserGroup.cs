@@ -11,9 +11,8 @@ namespace News.Vampire.Service.Models
 
         public int UserId { get; set; }
 
-        [Required]
         [StringLength(64)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         public virtual ICollection<Subscription>? Subscriptions { get; set; }
     }

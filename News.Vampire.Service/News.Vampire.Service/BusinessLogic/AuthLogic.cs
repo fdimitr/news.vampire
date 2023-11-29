@@ -12,12 +12,12 @@ namespace News.Vampire.Service.BusinessLogic
     {
         private readonly IConfiguration _configuration;
 
-        public AuthLogic(DbContextOptions<DataContext> dbContextOptions, IConfiguration configuration) : base(dbContextOptions)
+        public AuthLogic(DataContext dbContext, IConfiguration configuration) : base(dbContext)
         {
             _configuration = configuration;
         }
 
-        public async Task<User?> Authentificate(string login, string password)
+        public async Task<User?> Authenticate(string login, string password)
         {
             string? saltSource = _configuration.GetValue<string>(ConfigKey.HashSalt);
             if (saltSource is null) return null;
@@ -30,13 +30,9 @@ namespace News.Vampire.Service.BusinessLogic
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
 
-            User? result = null;
-            using (var dbContext = new DataContext(_dbContextOptions))
-            {
-                result = await (from user in dbContext.Users
+            User? result = await (from user in DbContext.Users
                                 where user.Login == login && user.Password == hashed
                                 select user).FirstOrDefaultAsync();
-            }
 
             return result;
         }

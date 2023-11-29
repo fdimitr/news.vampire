@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.4.33110.190
+VisualStudioVersion = 17.7.34302.85
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "News.Vampire.Service", "News.Vampire.Service\News.Vampire.Service.csproj", "{50E01CAF-C324-498C-A062-90E3BB93E5ED}"
 EndProject

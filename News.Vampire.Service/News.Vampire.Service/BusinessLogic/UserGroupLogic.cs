@@ -7,14 +7,13 @@ namespace News.Vampire.Service.BusinessLogic
 {
     public class UserGroupLogic : BaseLogic<UserGroup>, IUserGroupLogic
     {
-        public UserGroupLogic(DbContextOptions<DataContext> dbContextOptions) : base(dbContextOptions)
+        public UserGroupLogic(DataContext dbContext) : base(dbContext)
         {
         }
 
         public async Task<IList<UserGroup>> GetAllByUserAsync(long userId)
         {
-            await using var dbContext = new DataContext(_dbContextOptions);
-            return await (from userGroup in dbContext.UserGroups
+            return await (from userGroup in DbContext.UserGroups
                 where userGroup.UserId == userId
                 select userGroup).Distinct().Include(ug => ug.Subscriptions)!.ThenInclude(s => s.Source).ToListAsync();
         }
