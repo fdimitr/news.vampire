@@ -7,22 +7,24 @@ namespace News.Vampire.Service.BusinessLogic
 {
     public class SourceLogic : BaseLogic<Source>, ISourceLogic
     {
-        public SourceLogic(DataContext dbContext) : base(dbContext)
+        public SourceLogic(DataContext dbContext, DbContextOptions<DataContext> dbContextOptions) : base(dbContext, dbContextOptions)
         {
         }
 
-        public async Task<IList<Source>> GetAll()
+        public IQueryable<Source> GetAll()
         {
-            return await(from source in DbContext.Sources select source).ToListAsync();
+            return from source in DbContext.Sources select source;
         }
 
         public async Task<IList<Source>> GetSourcesReadyToLoadAsync()
         {
+            await using var dbContextTransactional = new DataContext(DbContextOptions);
+
             var timestampNow = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-            return await (from source in DbContext.Sources
-                join groupEntity in DbContext.Groups on source.GroupId equals groupEntity.Id
-                where source.NextLoadedTime < timestampNow && groupEntity.IsActive
-                select source).ToListAsync();
+            return await (from source in dbContextTransactional.Sources
+                          join groupEntity in dbContextTransactional.Groups on source.GroupId equals groupEntity.Id
+                          where source.NextLoadedTime < timestampNow && groupEntity.IsActive
+                          select source).ToListAsync();
         }
     }
 }

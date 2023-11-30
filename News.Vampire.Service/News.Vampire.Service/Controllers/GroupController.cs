@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using News.Vampire.Service.BusinessLogic.Interfaces;
 using News.Vampire.Service.Models;
+using News.Vampire.Service.Models.Dto;
 
 namespace News.Vampire.Service.Controllers
 {
@@ -10,23 +13,25 @@ namespace News.Vampire.Service.Controllers
     [ApiController]
     public class GroupController : ODataController
     {
+        private readonly IMapper _mapper;
         private readonly ILogger<GroupController> _logger;
         private readonly IGroupLogic _groupLogic;
 
 
-        public GroupController(ILogger<GroupController> logger, IGroupLogic groupLogic)
+        public GroupController(ILogger<GroupController> logger, IGroupLogic groupLogic, IMapper mapper)
         {
             _logger = logger;
             _groupLogic = groupLogic;
+            _mapper = mapper;
         }
 
         // GET: api/<GroupController>
         [HttpGet]
         [EnableQuery]
-        public IQueryable<Group> Get()
+        public IQueryable<GroupDto> Get()
         {
             _logger.LogDebug($"There was a {nameof(Get)} method call of {nameof(GroupController)}. Call from {HttpContext.Request.Host.Host}");
-            return _groupLogic.GetAll();
+            return _mapper.ProjectTo<GroupDto>(_groupLogic.GetAll());
         }
 
         // POST api/<GroupController>

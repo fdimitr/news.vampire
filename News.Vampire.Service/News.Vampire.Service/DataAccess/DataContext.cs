@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using News.Vampire.Service.Models;
-using System;
-using System.Reflection.Metadata;
 
 namespace News.Vampire.Service.DataAccess
 {

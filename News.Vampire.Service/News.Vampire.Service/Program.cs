@@ -9,6 +9,9 @@ using News.Vampire.Service.Services;
 using Microsoft.AspNetCore.OData;
 using Microsoft.OData.ModelBuilder;
 using News.Vampire.Service.Models;
+using News.Vampire.Service.Models.Dto;
+using News.Vampire.Service.Models.Mappers;
+using System.Configuration;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -16,21 +19,28 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Models
 var modelBuilder = new ODataConventionModelBuilder();
-modelBuilder.EntitySet<Group>("Groups");
+modelBuilder.EntitySet<GroupDto>("Groups").EntityType.Name = nameof(Group);
+modelBuilder.EntitySet<Source>("Sources");
 
 // Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-//For migration
+//For Entity Framework DbContext
+DbContextOptions<DataContext> dbContextOptions = new DbContextOptionsBuilder<DataContext>()
+    .UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString)).Options;
+
+builder.Services.AddSingleton(dbContextOptions);
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString));
 });
 
+// Auto mapper
+builder.Services.AddAutoMapper(typeof(ModelMappingProfile));
 
 // Add services to the container.
-
 builder.Services.AddControllers().AddOData(
     options => options
     .Select()
