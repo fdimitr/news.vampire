@@ -30,5 +30,7 @@ namespace News.Vampire.Service.Models
         public ushort UpdateFrequencyMinutes { get; set; }
 
         public long NextLoadedTime { get; set; }
+
+        public long CreatedTime { get; set; }
     }
 }

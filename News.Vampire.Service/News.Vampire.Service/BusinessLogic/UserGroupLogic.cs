@@ -11,13 +11,10 @@ namespace News.Vampire.Service.BusinessLogic
         {
         }
 
-        public async Task<IList<UserGroup>> GetAllByUserAsync(long userId)
+        public IQueryable<UserGroup> GetAllByUserAsync(int userId)
         {
-            await using var dbContextTransactional = new DataContext(DbContextOptions);
-
-            return await (from userGroup in dbContextTransactional.UserGroups
-                where userGroup.UserId == userId
-                select userGroup).Distinct().Include(ug => ug.Subscriptions)!.ThenInclude(s => s.Source).ToListAsync();
+            return (from userGroup in DbContext.UserGroups where userGroup.UserId == userId select userGroup).Distinct()
+                .Include(ug => ug.Subscriptions)!.ThenInclude(s => s.Source);
         }
     }
 }

@@ -8,6 +8,9 @@ namespace News.Vampire.Service.Models.Mappers
         public ModelMappingProfile()
         {
             CreateMap<Group, GroupDto>();
+            CreateMap<Source, SourceDto>();
+            CreateMap<Subscription, SubscriptionDto>();
+            CreateMap<UserGroup, UserGroupDto>();
         }
     }
 }

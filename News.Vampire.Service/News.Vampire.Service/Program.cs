@@ -1,3 +1,4 @@
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using News.Vampire.Service.DataAccess;
 using News.Vampire.Service.Constants;
@@ -7,20 +8,24 @@ using News.Vampire.Service.Managers.Interfaces;
 using News.Vampire.Service.Managers;
 using News.Vampire.Service.Services;
 using Microsoft.AspNetCore.OData;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OData.ModelBuilder;
 using News.Vampire.Service.Models;
 using News.Vampire.Service.Models.Dto;
 using News.Vampire.Service.Models.Mappers;
-using System.Configuration;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using News.Vampire.Service.Services.Interfaces;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
-
-var builder = WebApplication.CreateBuilder(args);
 
 // Models
 var modelBuilder = new ODataConventionModelBuilder();
 modelBuilder.EntitySet<GroupDto>("Groups").EntityType.Name = nameof(Group);
-modelBuilder.EntitySet<Source>("Sources");
+modelBuilder.EntitySet<Source>("Sources").EntityType.Name = nameof(Source);
+
+// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
 
 // Logging
 builder.Logging.ClearProviders();
@@ -31,7 +36,6 @@ DbContextOptions<DataContext> dbContextOptions = new DbContextOptionsBuilder<Dat
     .UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString)).Options;
 
 builder.Services.AddSingleton(dbContextOptions);
-
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString));
@@ -40,7 +44,39 @@ builder.Services.AddDbContext<DataContext>(options =>
 // Auto mapper
 builder.Services.AddAutoMapper(typeof(ModelMappingProfile));
 
-// Add services to the container.
+// Authentication
+// Add Identity
+builder.Services
+    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddEntityFrameworkStores<DataContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Issuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
+                                                                               throw new InvalidOperationException("Jwt ket doesn't specify")))
+        };
+    });
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+// OData
 builder.Services.AddControllers().AddOData(
     options => options
     .Select()
@@ -72,7 +108,8 @@ var app = builder.Build();
 
 //app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
