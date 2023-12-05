@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using News.Vampire.Service.Models;
+using News.Vampire.Service.Models.UserManagement;
 
 namespace News.Vampire.Service.DataAccess
 {
-    public class DataContext : DbContext
+    public class DataContext : IdentityDbContext<ApplicationUser>
     {
         public DbSet<Source> Sources { get; set; }
         public DbSet<NewsItem> NewsItem { get; set; }
@@ -25,8 +28,20 @@ namespace News.Vampire.Service.DataAccess
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // hashed "newspassword"
-            modelBuilder.Entity<User>().HasData(new User { Id = 1, Login = "Dmitry", Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=", Role = "admin"});
+            base.OnModelCreating(modelBuilder);
+
+            // Authentication
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = StaticUserRoles.Admin, NormalizedName = StaticUserRoles.Admin });
+            modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = StaticUserRoles.User, NormalizedName = StaticUserRoles.User });
+
+            // Application Data
+            modelBuilder.Entity<User>().HasData(new User
+            {
+                Id = 1,
+                Login = "Dmitry",
+                Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=",
+                Role = "Admin"
+            });
 
             modelBuilder.Entity<Group>()
                 .HasMany(e => e.Sources)

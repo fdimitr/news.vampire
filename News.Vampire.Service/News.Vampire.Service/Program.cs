@@ -15,6 +15,7 @@ using News.Vampire.Service.Models.Dto;
 using News.Vampire.Service.Models.Mappers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using News.Vampire.Service.Models.UserManagement;
 using News.Vampire.Service.Services.Interfaces;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
@@ -40,6 +41,10 @@ builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString));
 });
+builder.Services.AddDbContext<DataContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetValue<string>(ConfigKey.ConnectionString));
+});
 
 // Auto mapper
 builder.Services.AddAutoMapper(typeof(ModelMappingProfile));
@@ -47,9 +52,20 @@ builder.Services.AddAutoMapper(typeof(ModelMappingProfile));
 // Authentication
 // Add Identity
 builder.Services
-    .AddIdentity<IdentityUser, IdentityRole>()
+    .AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<DataContext>()
     .AddDefaultTokenProviders();
+
+// Config Identity
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequiredLength = 3;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.SignIn.RequireConfirmedEmail = false;
+});
 
 builder.Services.AddAuthentication(options =>
     {
@@ -66,11 +82,10 @@ builder.Services.AddAuthentication(options =>
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ??
-                                                                               throw new InvalidOperationException("Jwt ket doesn't specify")))
+            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+            ValidAudience = builder.Configuration["JWT:ValidAudience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"] ??
+                                                                               throw new InvalidOperationException("Jwt secret doesn't specify")))
         };
     });
 

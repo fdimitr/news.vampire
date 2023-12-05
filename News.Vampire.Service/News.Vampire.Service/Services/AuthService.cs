@@ -57,7 +57,7 @@ namespace News.Vampire.Service.Services
             }
 
             // Add a Default USER Role to all users
-            string role = registrationDto.Identifier == _configuration["JWTKey:Prerogative"] ? StaticUserRoles.Admin : StaticUserRoles.User;
+            string role = registrationDto.Identifier == _configuration["JWT:Prerogative"] ? StaticUserRoles.Admin : StaticUserRoles.User;
             await _userManager.AddToRoleAsync(newUser, role);
 
             return new AuthServiceResponseDto()
@@ -116,12 +116,12 @@ namespace News.Vampire.Service.Services
 
         private string GenerateToken(IEnumerable<Claim> claims)
         {
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWTKey:Secret"]));
-            var tokenExpiryTimeInHour = Convert.ToInt64(_configuration["JWTKey:TokenExpiryTimeInHour"]);
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+            var tokenExpiryTimeInHour = Convert.ToInt64(_configuration["JWT:TokenExpiryTimeInHour"]);
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Issuer = _configuration["JWTKey:ValidIssuer"],
-                Audience = _configuration["JWTKey:ValidAudience"],
+                Issuer = _configuration["JWT:ValidIssuer"],
+                Audience = _configuration["JWT:ValidAudience"],
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256),
                 Subject = new ClaimsIdentity(claims)
@@ -143,7 +143,7 @@ namespace News.Vampire.Service.Services
                     Message = "Invalid User!"
                 };
 
-            string role = updatePermissionDto.Identifier == _configuration["JWTKey:Prerogative"] ? StaticUserRoles.Admin : StaticUserRoles.User;
+            string role = updatePermissionDto.Identifier == _configuration["JWT:Prerogative"] ? StaticUserRoles.Admin : StaticUserRoles.User;
             var roles = await _userManager.GetRolesAsync(user);
 
             if (!roles.Contains(role))
