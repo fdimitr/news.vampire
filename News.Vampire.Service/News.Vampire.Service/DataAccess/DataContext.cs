@@ -6,13 +6,15 @@ using News.Vampire.Service.Models.UserManagement;
 
 namespace News.Vampire.Service.DataAccess
 {
-    public class DataContext : IdentityDbContext<ApplicationUser>
+    public sealed class DataContext : IdentityDbContext<ApplicationUser>
     {
+        private string? _databaseId = null;
+
         public DbSet<Source> Sources { get; set; }
         public DbSet<NewsItem> NewsItem { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<Reader> Readers { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
 
 
@@ -26,6 +28,16 @@ namespace News.Vampire.Service.DataAccess
             Database.EnsureCreated();
         }
 
+        public string GetDatabaseId()
+        {
+            if (string.IsNullOrWhiteSpace(_databaseId))
+            {
+                var result = Database.SqlQuery<long>($"SELECT system_identifier FROM pg_control_system()").ToList();
+                _databaseId = result.FirstOrDefault().ToString();
+            }
+            return _databaseId;
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -35,7 +47,7 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<IdentityRole>().HasData(new IdentityRole { Name = StaticUserRoles.User, NormalizedName = StaticUserRoles.User });
 
             // Application Data
-            modelBuilder.Entity<User>().HasData(new User
+            modelBuilder.Entity<Reader>().HasData(new Reader
             {
                 Id = 1,
                 Login = "Dmitry",
@@ -53,10 +65,12 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<Group>().HasData(new Group { Id = 2, Name = "Habr", IsActive = true });
             modelBuilder.Entity<Group>().HasData(new Group { Id = 3, Name = "News.RU", IsActive = true });
             modelBuilder.Entity<Group>().HasData(new Group { Id = 4, Name = "Новости", IsActive = true });
+            modelBuilder.Entity<Group>().HasData(new Group { Id = 5, Name = "Goha", IsActive = true });
 
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 1,
+                Code = "corr.events",
                 GroupId = 1,
                 Name = "Последние новости по разделу События в Украине",
                 Url = "http://k.img.com.ua/rss/ru/events.xml"
@@ -65,22 +79,16 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 2,
-                GroupId = 1,
-                Name = "Автомобили",
-                Url = "http://k.img.com.ua/rss/ru/motors.xml"
-            });
-
-            modelBuilder.Entity<Source>().HasData(new Source
-            {
-                Id = 3,
-                GroupId = 1,
-                Name = "Новости кино",
-                Url = "http://k.img.com.ua/rss/ru/cinema.xml"
+                Code = "goha.games",
+                GroupId = 5,
+                Name = "GOHA Видеоигры",
+                Url = "https://www.goha.ru/rss/videogames"
             });
 
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 4,
+                Code = "corr.tech",
                 GroupId = 1,
                 Name = "Технологии",
                 Url = "http://k.img.com.ua/rss/ru/technews.xml"
@@ -89,6 +97,7 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 5,
+                Code = "corr.space",
                 GroupId = 1,
                 Name = "Космос",
                 Url = "http://k.img.com.ua/rss/ru/space.xml"
@@ -97,6 +106,7 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 6,
+                Code = "habr.develop",
                 GroupId = 2,
                 Name = "HABR. Все публикации в потоке Разработка",
                 Url = "https://habr.com/ru/rss/flows/develop/all/?fl=rul"
@@ -105,6 +115,7 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 8,
+                Code = "meduza.news",
                 GroupId = 4,
                 Name = "Meduza: Новости",
                 Url = "https://meduza.io/rss/news"
@@ -113,6 +124,7 @@ namespace News.Vampire.Service.DataAccess
             modelBuilder.Entity<Source>().HasData(new Source
             {
                 Id = 10,
+                Code = "autonews",
                 GroupId = 4,
                 Name = "AUTO News",
                 Url = "https://autonews.autoua.net/rss/"

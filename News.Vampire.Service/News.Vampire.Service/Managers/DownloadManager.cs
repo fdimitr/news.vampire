@@ -1,10 +1,11 @@
-﻿using News.Vampire.Service.BusinessLogic.Interfaces;
-using News.Vampire.Service.Managers.Interfaces;
-using News.Vampire.Service.Models;
-using System.Net;
+﻿using System.Net;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Xml;
+using News.Vampire.Service.BusinessLogic.Interfaces;
+using News.Vampire.Service.Configuration;
+using News.Vampire.Service.Managers.Interfaces;
+using News.Vampire.Service.Models;
 
 namespace News.Vampire.Service.Managers
 {
@@ -13,12 +14,18 @@ namespace News.Vampire.Service.Managers
         private readonly ISourceLogic _sourceLogic;
         private readonly INewsItemLogic _newsItemLogic;
         private readonly ILogger<DownloadManager> _logger;
+        private readonly IAmazonLogic _amazonLogic;
+        private readonly AppSettings _appSettings;
 
-        public DownloadManager(ILogger<DownloadManager> logger, ISourceLogic sourceLogic, INewsItemLogic newsItemLogic)
+        public DownloadManager(ILogger<DownloadManager> logger, IConfiguration configuration, ISourceLogic sourceLogic, INewsItemLogic newsItemLogic, IAmazonLogic amazonLogic)
         {
             _sourceLogic = sourceLogic;
             _newsItemLogic = newsItemLogic;
             _logger = logger;
+            _amazonLogic = amazonLogic;
+
+            _appSettings = new AppSettings();
+            configuration.GetSection(AppSettings.Section).Bind(_appSettings);
         }
 
         public async Task StartSessionAsync(CancellationToken stoppingToken)
@@ -30,15 +37,14 @@ namespace News.Vampire.Service.Managers
 
             _logger.LogInformation($"{sources.Count} sources ready to download");
 
-            int maxConcurrency = 15;
-            using (SemaphoreSlim semaphore = new SemaphoreSlim(0, maxConcurrency))
+            using (var semaphore = new SemaphoreSlim(0, _appSettings.MaxConcurrencyDownloadSessions))
             {
                 List<Task> tasks = new();
                 foreach (var source in sources)
                 {
                     tasks.Add(DownloadingProcessAsync(source, semaphore, stoppingToken));
                 }
-                semaphore.Release(maxConcurrency);
+                semaphore.Release(_appSettings.MaxConcurrencyDownloadSessions);
                 await Task.WhenAll(tasks);
             }
 
@@ -50,7 +56,7 @@ namespace News.Vampire.Service.Managers
             _logger.LogInformation("Task {0} begins and waits for the semaphore.", source.Id);
             await semaphore.WaitAsync(cancellationToken);
             HttpClient client = new();
-            HttpRequestMessage httpRequestMessage = new HttpRequestMessage();
+            var httpRequestMessage = new HttpRequestMessage();
 
             _logger.LogInformation("Task {0} enters the semaphore.", source.Id);
             try
@@ -62,6 +68,8 @@ namespace News.Vampire.Service.Managers
                 }
 
                 int numberItemsAdded = 0;
+                var databaseId = _newsItemLogic.GetDatabaseId();
+
                 foreach (SyndicationItem item in feed.Items)
                 {
                     string externalId = string.IsNullOrWhiteSpace(item.Id) ? item.BaseUri.ToString() : item.Id;
@@ -84,6 +92,9 @@ namespace News.Vampire.Service.Managers
                             Description = description,
                             Author = item.Authors.Select(a => a.Name).ToList()
                         };
+
+                        // Upload news item image to S3 and get S3 Url
+                        await ProcessNewsItemImage(item, databaseId, newItem, source.Code);
 
                         await _newsItemLogic.CreateAsync(newItem);
                         numberItemsAdded++;
@@ -109,6 +120,28 @@ namespace News.Vampire.Service.Managers
                 _logger.LogInformation("Task {0} releases the semaphore; Count of free semaphores: {1}.",
                                   source.Id, semaphoreCount);
             }
+        }
+
+        private async Task ProcessNewsItemImage(SyndicationItem item, string databaseId, NewsItem newItem, string sourceCode)
+        {
+            var link = item.Links?.FirstOrDefault(l => IsImageMediaType(l.MediaType));
+            if (link != null)
+            {
+                var s3Response = await _amazonLogic.DownloadImageAndSaveToS3Async(databaseId, $"article.images/{sourceCode}", link.Uri);
+                if (s3Response.IsSucceed)
+                {
+                    newItem.ImageUrl = s3Response.Response;
+                }
+            }
+        }
+
+        private bool IsImageMediaType(string mediaType)
+        {
+            return mediaType switch
+            {
+                "image/jpeg" or "image/jpg" or "image/gif" or "image/png" or "image/svg" => true,
+                _ => false,
+            };
         }
 
     }

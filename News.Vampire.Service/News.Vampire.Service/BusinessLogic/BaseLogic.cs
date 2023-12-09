@@ -15,6 +15,12 @@ namespace News.Vampire.Service.BusinessLogic
             DbContextOptions = dbContextOptions;
         }
 
+        public string GetDatabaseId()
+        {
+            using var dbContextTransactional = new DataContext(DbContextOptions);
+            return dbContextTransactional.GetDatabaseId();
+        }
+
         public async Task<T?> GetByIdAsync(int id)
         {
             await using var dbContextTransactional = new DataContext(DbContextOptions);

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace News.Vampire.Service.BusinessLogic
 {
-    public class AuthLogic : BaseLogic<User>, IAuthLogic
+    public class AuthLogic : BaseLogic<Reader>, IAuthLogic
     {
         private readonly IConfiguration _configuration;
 
@@ -17,7 +17,7 @@ namespace News.Vampire.Service.BusinessLogic
             _configuration = configuration;
         }
 
-        public async Task<User?> Authenticate(string login, string password)
+        public async Task<Reader?> Authenticate(string login, string password)
         {
             await using var dbContextTransactional = new DataContext(DbContextOptions);
 
@@ -32,7 +32,7 @@ namespace News.Vampire.Service.BusinessLogic
                 iterationCount: 10000,
                 numBytesRequested: 256 / 8));
 
-            User? result = await (from user in dbContextTransactional.Users
+            Reader? result = await (from user in dbContextTransactional.Readers
                                 where user.Login == login && user.Password == hashed
                                 select user).FirstOrDefaultAsync();
 

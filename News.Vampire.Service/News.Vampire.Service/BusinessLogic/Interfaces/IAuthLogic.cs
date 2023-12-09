@@ -8,6 +8,6 @@ namespace News.Vampire.Service.BusinessLogic.Interfaces
 {
     public interface IAuthLogic
     {
-        public Task<User?> Authenticate(string login, string password);
+        public Task<Reader?> Authenticate(string login, string password);
     }
 }

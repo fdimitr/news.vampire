@@ -71,6 +71,21 @@ namespace News.Vampire.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Readers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Login = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
+                    Password = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
+                    Role = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Readers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserGroups",
                 columns: table => new
                 {
@@ -82,21 +97,6 @@ namespace News.Vampire.Service.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserGroups", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Users",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Login = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    Password = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    Role = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -211,6 +211,7 @@ namespace News.Vampire.Service.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Code = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
                     GroupId = table.Column<int>(type: "integer", nullable: false),
                     Url = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     Name = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
@@ -245,7 +246,8 @@ namespace News.Vampire.Service.Migrations
                     PublicationDate = table.Column<long>(type: "bigint", nullable: false),
                     TimeStamp = table.Column<long>(type: "bigint", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: true),
-                    Author = table.Column<List<string>>(type: "jsonb", maxLength: 256, nullable: true)
+                    Author = table.Column<List<string>>(type: "jsonb", maxLength: 256, nullable: true),
+                    ImageUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -273,6 +275,12 @@ namespace News.Vampire.Service.Migrations
                 {
                     table.PrimaryKey("PK_Subscriptions", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Subscriptions_Readers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Readers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Subscriptions_Sources_SourceId",
                         column: x => x.SourceId,
                         principalTable: "Sources",
@@ -284,12 +292,6 @@ namespace News.Vampire.Service.Migrations
                         principalTable: "UserGroups",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Subscriptions_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
@@ -297,8 +299,8 @@ namespace News.Vampire.Service.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1e5d5153-c45b-438e-9cba-6a320bff8498", null, "ADMIN", "ADMIN" },
-                    { "21fa496f-84b4-4cbd-993a-d3976c74e3c7", null, "USER", "USER" }
+                    { "a24f24ab-5224-4b99-8c37-20f2217e3df0", null, "ADMIN", "ADMIN" },
+                    { "f3a66085-1887-4fb9-b41f-6a145976a8cf", null, "USER", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -309,8 +311,14 @@ namespace News.Vampire.Service.Migrations
                     { 1, true, "Корреспондент" },
                     { 2, true, "Habr" },
                     { 3, true, "News.RU" },
-                    { 4, true, "Новости" }
+                    { 4, true, "Новости" },
+                    { 5, true, "Goha" }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Readers",
+                columns: new[] { "Id", "Login", "Password", "Role" },
+                values: new object[] { 1, "Dmitry", "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=", "Admin" });
 
             migrationBuilder.InsertData(
                 table: "UserGroups",
@@ -318,23 +326,17 @@ namespace News.Vampire.Service.Migrations
                 values: new object[] { 1, "My Group", 1 });
 
             migrationBuilder.InsertData(
-                table: "Users",
-                columns: new[] { "Id", "Login", "Password", "Role" },
-                values: new object[] { 1, "Dmitry", "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=", "Admin" });
-
-            migrationBuilder.InsertData(
                 table: "Sources",
-                columns: new[] { "Id", "CreatedTime", "Description", "GroupId", "Name", "NextLoadedTime", "Sort", "UpdateFrequencyMinutes", "Url" },
+                columns: new[] { "Id", "Code", "CreatedTime", "Description", "GroupId", "Name", "NextLoadedTime", "Sort", "UpdateFrequencyMinutes", "Url" },
                 values: new object[,]
                 {
-                    { 1, 0L, null, 1, "Последние новости по разделу События в Украине", 0L, 0, 0, "http://k.img.com.ua/rss/ru/events.xml" },
-                    { 2, 0L, null, 1, "Автомобили", 0L, 0, 0, "http://k.img.com.ua/rss/ru/motors.xml" },
-                    { 3, 0L, null, 1, "Новости кино", 0L, 0, 0, "http://k.img.com.ua/rss/ru/cinema.xml" },
-                    { 4, 0L, null, 1, "Технологии", 0L, 0, 0, "http://k.img.com.ua/rss/ru/technews.xml" },
-                    { 5, 0L, null, 1, "Космос", 0L, 0, 0, "http://k.img.com.ua/rss/ru/space.xml" },
-                    { 6, 0L, null, 2, "HABR. Все публикации в потоке Разработка", 0L, 0, 0, "https://habr.com/ru/rss/flows/develop/all/?fl=rul" },
-                    { 8, 0L, null, 4, "Meduza: Новости", 0L, 0, 0, "https://meduza.io/rss/news" },
-                    { 10, 0L, null, 4, "AUTO News", 0L, 0, 0, "https://autonews.autoua.net/rss/" }
+                    { 1, "corr.events", 0L, null, 1, "Последние новости по разделу События в Украине", 0L, 0, 0, "http://k.img.com.ua/rss/ru/events.xml" },
+                    { 2, "goha.games", 0L, null, 5, "GOHA Видеоигры", 0L, 0, 0, "https://www.goha.ru/rss/videogames" },
+                    { 4, "corr.tech", 0L, null, 1, "Технологии", 0L, 0, 0, "http://k.img.com.ua/rss/ru/technews.xml" },
+                    { 5, "corr.space", 0L, null, 1, "Космос", 0L, 0, 0, "http://k.img.com.ua/rss/ru/space.xml" },
+                    { 6, "habr.develop", 0L, null, 2, "HABR. Все публикации в потоке Разработка", 0L, 0, 0, "https://habr.com/ru/rss/flows/develop/all/?fl=rul" },
+                    { 8, "meduza.news", 0L, null, 4, "Meduza: Новости", 0L, 0, 0, "https://meduza.io/rss/news" },
+                    { 10, "autonews", 0L, null, 4, "AUTO News", 0L, 0, 0, "https://autonews.autoua.net/rss/" }
                 });
 
             migrationBuilder.InsertData(
@@ -441,13 +443,13 @@ namespace News.Vampire.Service.Migrations
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
+                name: "Readers");
+
+            migrationBuilder.DropTable(
                 name: "Sources");
 
             migrationBuilder.DropTable(
                 name: "UserGroups");
-
-            migrationBuilder.DropTable(
-                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Groups");

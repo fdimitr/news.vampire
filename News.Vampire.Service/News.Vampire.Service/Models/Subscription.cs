@@ -15,7 +15,7 @@ namespace News.Vampire.Service.Models
 
         public int UserId { get; set; }
 
-        public User? User { get; set; }
+        public Reader? User { get; set; }
 
         public int UserGroupId { get; set; }
 

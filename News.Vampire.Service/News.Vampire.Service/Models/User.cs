@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace News.Vampire.Service.Models
 {
-    public class User
+    public class Reader
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

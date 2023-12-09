@@ -51,13 +51,13 @@ namespace News.Vampire.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1e5d5153-c45b-438e-9cba-6a320bff8498",
+                            Id = "a24f24ab-5224-4b99-8c37-20f2217e3df0",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "21fa496f-84b4-4cbd-993a-d3976c74e3c7",
+                            Id = "f3a66085-1887-4fb9-b41f-6a145976a8cf",
                             Name = "USER",
                             NormalizedName = "USER"
                         });
@@ -213,6 +213,12 @@ namespace News.Vampire.Service.Migrations
                             Id = 4,
                             IsActive = true,
                             Name = "Новости"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsActive = true,
+                            Name = "Goha"
                         });
                 });
 
@@ -237,6 +243,9 @@ namespace News.Vampire.Service.Migrations
                         .HasColumnType("character varying(4096)");
 
                     b.Property<string>("ExternalId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
                     b.Property<long>("PublicationDate")
@@ -264,6 +273,43 @@ namespace News.Vampire.Service.Migrations
                     b.ToTable("NewsItem");
                 });
 
+            modelBuilder.Entity("News.Vampire.Service.Models.Reader", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Login")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Readers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Login = "Dmitry",
+                            Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=",
+                            Role = "Admin"
+                        });
+                });
+
             modelBuilder.Entity("News.Vampire.Service.Models.Source", b =>
                 {
                     b.Property<int>("Id")
@@ -271,6 +317,11 @@ namespace News.Vampire.Service.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("character varying(16)");
 
                     b.Property<long>("CreatedTime")
                         .HasColumnType("bigint");
@@ -311,6 +362,7 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 1,
+                            Code = "corr.events",
                             CreatedTime = 0L,
                             GroupId = 1,
                             Name = "Последние новости по разделу События в Украине",
@@ -322,28 +374,19 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 2,
+                            Code = "goha.games",
                             CreatedTime = 0L,
-                            GroupId = 1,
-                            Name = "Автомобили",
+                            GroupId = 5,
+                            Name = "GOHA Видеоигры",
                             NextLoadedTime = 0L,
                             Sort = 0,
                             UpdateFrequencyMinutes = 0,
-                            Url = "http://k.img.com.ua/rss/ru/motors.xml"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedTime = 0L,
-                            GroupId = 1,
-                            Name = "Новости кино",
-                            NextLoadedTime = 0L,
-                            Sort = 0,
-                            UpdateFrequencyMinutes = 0,
-                            Url = "http://k.img.com.ua/rss/ru/cinema.xml"
+                            Url = "https://www.goha.ru/rss/videogames"
                         },
                         new
                         {
                             Id = 4,
+                            Code = "corr.tech",
                             CreatedTime = 0L,
                             GroupId = 1,
                             Name = "Технологии",
@@ -355,6 +398,7 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 5,
+                            Code = "corr.space",
                             CreatedTime = 0L,
                             GroupId = 1,
                             Name = "Космос",
@@ -366,6 +410,7 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 6,
+                            Code = "habr.develop",
                             CreatedTime = 0L,
                             GroupId = 2,
                             Name = "HABR. Все публикации в потоке Разработка",
@@ -377,6 +422,7 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 8,
+                            Code = "meduza.news",
                             CreatedTime = 0L,
                             GroupId = 4,
                             Name = "Meduza: Новости",
@@ -388,6 +434,7 @@ namespace News.Vampire.Service.Migrations
                         new
                         {
                             Id = 10,
+                            Code = "autonews",
                             CreatedTime = 0L,
                             GroupId = 4,
                             Name = "AUTO News",
@@ -449,43 +496,6 @@ namespace News.Vampire.Service.Migrations
                             SourceId = 8,
                             UserGroupId = 1,
                             UserId = 1
-                        });
-                });
-
-            modelBuilder.Entity("News.Vampire.Service.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Login")
-                        .IsRequired()
-                        .HasMaxLength(16)
-                        .HasColumnType("character varying(16)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Login = "Dmitry",
-                            Password = "6QvNlj77zDchLwiTrY/b/o28Cg3vvwwO7IkZrh5BqaA=",
-                            Role = "Admin"
                         });
                 });
 
@@ -675,7 +685,7 @@ namespace News.Vampire.Service.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("News.Vampire.Service.Models.User", "User")
+                    b.HasOne("News.Vampire.Service.Models.Reader", "User")
                         .WithMany("Subscriptions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -693,14 +703,14 @@ namespace News.Vampire.Service.Migrations
                     b.Navigation("Sources");
                 });
 
+            modelBuilder.Entity("News.Vampire.Service.Models.Reader", b =>
+                {
+                    b.Navigation("Subscriptions");
+                });
+
             modelBuilder.Entity("News.Vampire.Service.Models.Source", b =>
                 {
                     b.Navigation("News");
-                });
-
-            modelBuilder.Entity("News.Vampire.Service.Models.User", b =>
-                {
-                    b.Navigation("Subscriptions");
                 });
 
             modelBuilder.Entity("News.Vampire.Service.Models.UserGroup", b =>

@@ -110,6 +110,8 @@ builder.Services.AddScoped<ISourceLogic, SourceLogic>();
 builder.Services.AddScoped<INewsItemLogic, NewsItemLogic>();
 builder.Services.AddScoped<ISubscriptionLogic, SubscriptionLogic>();
 builder.Services.AddScoped<IDownloadManager, DownloadManager>();
+builder.Services.AddScoped<IAmazonLogic, AmazonLogic>();
+builder.Services.AddScoped<IAwsManager, AwsManager>();
 builder.Services.AddHostedService<DownloadService>();
 
 var app = builder.Build();
