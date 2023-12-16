@@ -57,6 +57,20 @@ namespace News.Vampire.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Errors",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Values = table.Column<string>(type: "jsonb", maxLength: 512, nullable: false),
+                    Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Errors", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Groups",
                 columns: table => new
                 {
@@ -240,8 +254,8 @@ namespace News.Vampire.Service.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SourceId = table.Column<int>(type: "integer", nullable: false),
                     Title = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
-                    Url = table.Column<List<string>>(type: "jsonb", maxLength: 2048, nullable: true),
-                    Description = table.Column<string>(type: "character varying(4096)", maxLength: 4096, nullable: true),
+                    Url = table.Column<List<string>>(type: "jsonb", maxLength: 1024, nullable: true),
+                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
                     Category = table.Column<List<string>>(type: "jsonb", maxLength: 512, nullable: true),
                     PublicationDate = table.Column<long>(type: "bigint", nullable: false),
                     TimeStamp = table.Column<long>(type: "bigint", nullable: false),
@@ -299,8 +313,8 @@ namespace News.Vampire.Service.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "a24f24ab-5224-4b99-8c37-20f2217e3df0", null, "ADMIN", "ADMIN" },
-                    { "f3a66085-1887-4fb9-b41f-6a145976a8cf", null, "USER", "USER" }
+                    { "09419d17-06e6-43f0-99e6-3f19085b0013", null, "USER", "USER" },
+                    { "50d74ee0-4a4b-48a8-aabc-f1bc3a1f5442", null, "ADMIN", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -429,6 +443,9 @@ namespace News.Vampire.Service.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Errors");
 
             migrationBuilder.DropTable(
                 name: "NewsItem");

@@ -51,13 +51,13 @@ namespace News.Vampire.Service.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a24f24ab-5224-4b99-8c37-20f2217e3df0",
+                            Id = "50d74ee0-4a4b-48a8-aabc-f1bc3a1f5442",
                             Name = "ADMIN",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "f3a66085-1887-4fb9-b41f-6a145976a8cf",
+                            Id = "09419d17-06e6-43f0-99e6-3f19085b0013",
                             Name = "USER",
                             NormalizedName = "USER"
                         });
@@ -169,6 +169,27 @@ namespace News.Vampire.Service.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("News.Vampire.Service.Models.CustomError", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Values")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("jsonb");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Errors");
+                });
+
             modelBuilder.Entity("News.Vampire.Service.Models.Group", b =>
                 {
                     b.Property<int>("Id")
@@ -239,8 +260,8 @@ namespace News.Vampire.Service.Migrations
                         .HasColumnType("jsonb");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(4096)
-                        .HasColumnType("character varying(4096)");
+                        .HasMaxLength(1024)
+                        .HasColumnType("character varying(1024)");
 
                     b.Property<string>("ExternalId")
                         .HasColumnType("text");
@@ -263,7 +284,7 @@ namespace News.Vampire.Service.Migrations
                         .HasColumnType("character varying(512)");
 
                     b.Property<List<string>>("Url")
-                        .HasMaxLength(2048)
+                        .HasMaxLength(1024)
                         .HasColumnType("jsonb");
 
                     b.HasKey("Id");

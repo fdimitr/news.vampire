@@ -16,11 +16,11 @@ namespace News.Vampire.Service.Models
         [StringLength(512)]
         public required string Title { get; set; }
 
-        [StringLength(2048)]
+        [StringLength(1024)]
         [Column(TypeName = "jsonb")]
         public List<string>? Url { get; set; }
 
-        [StringLength(4096)]
+        [StringLength(1024)]
         public string? Description { get; set; }
 
         [StringLength(512)]

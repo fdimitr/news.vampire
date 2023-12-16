@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using News.Vampire.Service.Models.UserManagement;
 using News.Vampire.Service.Services.Interfaces;
+using News.Vampire.Service.Logger;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
@@ -31,6 +32,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
+builder.Logging.AddDbLogger(options =>
+{
+    builder.Configuration.GetSection("Logging").GetSection("Database").GetSection("Options").Bind(options);
+    options.ConnectionString = builder.Configuration.GetValue<string>(ConfigKey.ConnectionString);
+});
 
 //For Entity Framework DbContext
 DbContextOptions<DataContext> dbContextOptions = new DbContextOptionsBuilder<DataContext>()
@@ -104,6 +110,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IAuthLogic, AuthLogic>();
+builder.Services.AddScoped<IErrorLogic, ErrorLogic>();
 builder.Services.AddScoped<IGroupLogic, GroupLogic>();
 builder.Services.AddScoped<IUserGroupLogic, UserGroupLogic>();
 builder.Services.AddScoped<ISourceLogic, SourceLogic>();

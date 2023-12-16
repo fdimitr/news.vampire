@@ -16,6 +16,7 @@ namespace News.Vampire.Service.DataAccess
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Reader> Readers { get; set; }
         public DbSet<UserGroup> UserGroups { get; set; }
+        public DbSet<Error> Errors { get; set; }
 
 
         public DataContext() : base()
