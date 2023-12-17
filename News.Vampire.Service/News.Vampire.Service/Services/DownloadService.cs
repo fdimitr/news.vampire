@@ -26,6 +26,7 @@ namespace News.Vampire.Service.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation($"{GetType().Assembly.GetName()}");
             _logger.LogInformation($"DownloadService is starting.");
 
             stoppingToken.Register(() =>
