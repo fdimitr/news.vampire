@@ -62,7 +62,7 @@ namespace News.Vampire.Service.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Values = table.Column<string>(type: "jsonb", maxLength: 512, nullable: false),
+                    Values = table.Column<string>(type: "jsonb", nullable: false),
                     Created = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
@@ -253,14 +253,14 @@ namespace News.Vampire.Service.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     SourceId = table.Column<int>(type: "integer", nullable: false),
-                    Title = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
-                    Url = table.Column<List<string>>(type: "jsonb", maxLength: 1024, nullable: true),
-                    Description = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: true),
-                    Category = table.Column<List<string>>(type: "jsonb", maxLength: 512, nullable: true),
+                    Title = table.Column<string>(type: "character varying(1024)", maxLength: 1024, nullable: false),
+                    Url = table.Column<List<string>>(type: "jsonb", nullable: true),
+                    Description = table.Column<string>(type: "character varying(5120)", maxLength: 5120, nullable: true),
+                    Category = table.Column<List<string>>(type: "jsonb", nullable: true),
                     PublicationDate = table.Column<long>(type: "bigint", nullable: false),
                     TimeStamp = table.Column<long>(type: "bigint", nullable: false),
                     ExternalId = table.Column<string>(type: "text", nullable: true),
-                    Author = table.Column<List<string>>(type: "jsonb", maxLength: 256, nullable: true),
+                    Author = table.Column<List<string>>(type: "jsonb", nullable: true),
                     ImageUrl = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -313,8 +313,8 @@ namespace News.Vampire.Service.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "09419d17-06e6-43f0-99e6-3f19085b0013", null, "USER", "USER" },
-                    { "50d74ee0-4a4b-48a8-aabc-f1bc3a1f5442", null, "ADMIN", "ADMIN" }
+                    { "394aa45b-c5d6-4f3f-8dfc-f2a102a736c6", null, "USER", "USER" },
+                    { "c3aeda04-b07a-4b69-8c98-f65cdb5308d6", null, "ADMIN", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
