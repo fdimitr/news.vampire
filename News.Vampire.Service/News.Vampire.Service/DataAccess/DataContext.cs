@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using News.Vampire.Service.Models;
 using News.Vampire.Service.Models.UserManagement;
 
@@ -37,6 +39,87 @@ namespace News.Vampire.Service.DataAccess
                 _databaseId = result.FirstOrDefault().ToString();
             }
             return _databaseId;
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+        {
+            try
+            {
+                return await base.SaveChangesAsync(cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                if(!TruncateStringValuesIfPossibleOrThrowException(ex.Entries)) throw;
+            }
+
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = new CancellationToken())
+        {
+            try
+            {
+                return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (!TruncateStringValuesIfPossibleOrThrowException(ex.Entries)) throw;
+            }
+
+            return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        public override int SaveChanges()
+        {
+            try
+            {
+                return base.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                if (!TruncateStringValuesIfPossibleOrThrowException(ex.Entries)) throw;
+            }
+
+            return base.SaveChanges();
+        }
+
+        public override int SaveChanges(bool acceptAllChangesOnSuccess)
+        {
+            try
+            {
+                return base.SaveChanges(acceptAllChangesOnSuccess);
+            }
+            catch (DbUpdateException ex)
+            {
+                if (!TruncateStringValuesIfPossibleOrThrowException(ex.Entries)) throw;
+            }
+
+            return base.SaveChanges(acceptAllChangesOnSuccess);
+        }
+
+        private bool TruncateStringValuesIfPossibleOrThrowException(IReadOnlyList<EntityEntry> entries)
+        {
+            bool repeatSave = false;
+            foreach (var entry in entries)
+            {
+                foreach (var property in entry.Entity.GetType().GetProperties()
+                             .Where(p => p.PropertyType == typeof(string)))
+                {
+                    var stringLengthAttr = property.GetCustomAttributes(typeof(StringLengthAttribute), true).FirstOrDefault();
+                    var maxLength = ((StringLengthAttribute)stringLengthAttr!)?.MaximumLength;
+                    if (maxLength > 0)
+                    {
+                        var value = property.GetValue(entry.Entity)?.ToString();
+                        if (!string.IsNullOrEmpty(value) && value.Length > maxLength.Value)
+                        {
+                            repeatSave = true;
+                            property.SetValue(entry.Entity, value[..maxLength.Value]);
+                        }
+                    }
+                }
+            }
+
+            return repeatSave;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
