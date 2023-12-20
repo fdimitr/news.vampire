@@ -27,7 +27,7 @@ namespace News.Vampire.Service.Logger
         /// <returns></returns>  
         public bool IsEnabled(LogLevel logLevel)
         {
-            return logLevel != LogLevel.None;
+            return logLevel == LogLevel.Error || logLevel == LogLevel.Critical || logLevel == LogLevel.Warning;
         }
 
 
@@ -43,7 +43,7 @@ namespace News.Vampire.Service.Logger
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
             Func<TState, Exception, string> formatter)
         {
-            if (!IsEnabled(logLevel) && logLevel != LogLevel.Error && logLevel != LogLevel.Critical && logLevel != LogLevel.Warning)
+            if (!IsEnabled(logLevel))
             {
                 // Don't log the entry if it's not enabled.  
                 return;
